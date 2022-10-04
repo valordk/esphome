@@ -7,6 +7,7 @@ from esphome.const import (
     CONF_CLOCK_PIN,
     CONF_DATA_PIN,
     CONF_TRIGGER_PIN,
+    CONF_REVERSED,
     DEVICE_CLASS_DISTANCE,
     STATE_CLASS_MEASUREMENT,
     UNIT_MILLIMETER,
@@ -30,6 +31,7 @@ CONFIG_SCHEMA = (
             cv.Required(CONF_CLOCK_PIN): pins.internal_gpio_input_pin_schema,
             cv.Required(CONF_DATA_PIN): pins.internal_gpio_input_pin_schema,
             cv.Required(CONF_TRIGGER_PIN): pins.gpio_output_pin_schema,
+            cv.Optional(CONF_REVERSED, default=False): cv.boolean,
         }
     ).extend(cv.polling_component_schema("60s"))
 )
@@ -45,3 +47,5 @@ async def to_code(config):
     cg.add(var.set_pin_data(pin_data))
     pin_trigger = await gpio_pin_expression(config[CONF_TRIGGER_PIN])
     cg.add(var.set_pin_trigger(pin_trigger))
+
+    cg.add(var.set_reversed(config[CONF_REVERSED]))

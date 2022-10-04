@@ -59,6 +59,8 @@ class MitutoyoInstrument : public PollingComponent, public sensor::Sensor {
   void enable_polling() { polling_enabled_ = true; }
   void disable_polling() { polling_enabled_ = false; }
   bool is_polling() { return polling_enabled_; }
+  void set_reversed(bool reversed) { is_reversed_ = reversed; }
+  bool is_reversed() { return is_reversed_; }
 
   void setup() override {
     this->store_.setup(this->pin_clock_, this->pin_data_, this->pin_trigger_);
@@ -74,6 +76,7 @@ class MitutoyoInstrument : public PollingComponent, public sensor::Sensor {
   InternalGPIOPin *pin_data_;
   InternalGPIOPin *pin_trigger_;  
   bool polling_enabled_ = true;
+  bool is_reversed_ = false;
 };
 
 }  // namespace mitutoyo

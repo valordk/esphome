@@ -87,7 +87,7 @@ void MitutoyoInstrument::dump_config() {
   ESP_LOGCONFIG(TAG, "MitutoyoInstrument:");
   LOG_PIN("  Pin Clock: ", this->pin_clock_);
   LOG_PIN("  Pin Data: ", this->pin_data_);
-  LOG_PIN("  Pin Req: ", this->pin_trigger_);
+  LOG_PIN("  Pin Req: ", this->pin_trigger_);  
   LOG_UPDATE_INTERVAL(this);
 }
 
@@ -98,7 +98,7 @@ void MitutoyoInstrument::update() {
     this->pin_trigger_->digital_write(true);
     delayMicroseconds(10000);
     for (uint8_t i = 0; i < 28; i++) {
-      /// Avoid unnessarily long waiting and disable the trigger once the data is read
+      /// Avoid unnecessarily long waiting and disable the trigger once the data is read
       if (!store_.is_reading) {
         break;
       }
@@ -109,7 +109,9 @@ void MitutoyoInstrument::update() {
     if (!store_.is_reading) { 
       /// Reading stopped successfully    
       this->publish_state(
-        (store_.last_reading / (store_.last_reading_is_positive ? 1.0f:-1.0f)) / pow10[store_.last_reading_decimal_point]
+        (store_.last_reading / (store_.last_reading_is_positive ? 1.0f:-1.0f)) 
+        / pow10[store_.last_reading_decimal_point] 
+        * ( this->is_reversed_ ? -1 : 1)
       );
     } else {
       ESP_LOGW(TAG, "Timeout reading measurement.");
