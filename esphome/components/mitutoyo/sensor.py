@@ -29,7 +29,7 @@ CONFIG_SCHEMA = (
         {
             cv.Required(CONF_CLOCK_PIN): pins.internal_gpio_input_pin_schema,
             cv.Required(CONF_DATA_PIN): pins.internal_gpio_input_pin_schema,
-            cv.Required(CONF_TRIGGER_PIN): pins.gpio_output_pin_schema
+            cv.Required(CONF_TRIGGER_PIN): pins.gpio_output_pin_schema,
         }
     ).extend(cv.polling_component_schema("60s"))
 )

@@ -92,28 +92,31 @@ void MitutoyoInstrument::dump_config() {
 }
 
 void MitutoyoInstrument::update() {
-  ESP_LOGD(TAG, "Initiating measurement");
-  store_.mark_is_reading_();
-  this->pin_trigger_->digital_write(true);
-  delayMicroseconds(10000);
-  for (uint8_t i = 0; i < 28; i++) {
-    /// Avoid unnessarily long waiting and disable the trigger once the data is read
-    if (!store_.is_reading) {
-      break;
+  if (this->polling_enabled_) {      
+    ESP_LOGD(TAG, "Initiating measurement");
+    store_.mark_is_reading_();
+    this->pin_trigger_->digital_write(true);
+    delayMicroseconds(10000);
+    for (uint8_t i = 0; i < 28; i++) {
+      /// Avoid unnessarily long waiting and disable the trigger once the data is read
+      if (!store_.is_reading) {
+        break;
+      }
+      delayMicroseconds(5000);
     }
-    delayMicroseconds(5000);
-  }
 
-  this->pin_trigger_->digital_write(false);  
-  if (!store_.is_reading) { 
-    /// Reading stopped successfully    
-    this->publish_state(
-      (store_.last_reading / (store_.last_reading_is_positive ? 1.0f:-1.0f)) / pow10[store_.last_reading_decimal_point]
-    );
+    this->pin_trigger_->digital_write(false);  
+    if (!store_.is_reading) { 
+      /// Reading stopped successfully    
+      this->publish_state(
+        (store_.last_reading / (store_.last_reading_is_positive ? 1.0f:-1.0f)) / pow10[store_.last_reading_decimal_point]
+      );
+    } else {
+      ESP_LOGW(TAG, "Timeout reading measurement.");
+    }
   } else {
-    ESP_LOGW(TAG, "Timeout reading measurement.");
+    ESP_LOGD(TAG, "Polling is temporarily disabled.");
   }
-
 }
 
 }  // namespace mitutoyo

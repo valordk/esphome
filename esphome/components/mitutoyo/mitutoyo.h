@@ -56,6 +56,9 @@ class MitutoyoInstrument : public PollingComponent, public sensor::Sensor {
   void set_pin_clock(InternalGPIOPin *pin) { pin_clock_ = pin; }
   void set_pin_data(InternalGPIOPin *pin) { pin_data_ = pin; }
   void set_pin_trigger(InternalGPIOPin *pin) { pin_trigger_ = pin; }
+  void enable_polling() { polling_enabled_ = true; }
+  void disable_polling() { polling_enabled_ = false; }
+  bool is_polling() { return polling_enabled_; }
 
   void setup() override {
     this->store_.setup(this->pin_clock_, this->pin_data_, this->pin_trigger_);
@@ -69,8 +72,8 @@ class MitutoyoInstrument : public PollingComponent, public sensor::Sensor {
   MitutoyoStore store_;
   InternalGPIOPin *pin_clock_;
   InternalGPIOPin *pin_data_;
-  InternalGPIOPin *pin_trigger_;
-
+  InternalGPIOPin *pin_trigger_;  
+  bool polling_enabled_ = true;
 };
 
 }  // namespace mitutoyo
